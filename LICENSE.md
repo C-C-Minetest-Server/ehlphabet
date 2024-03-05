@@ -1,3 +1,13 @@
+
+# License of `ehlphabet`
+
+## License of Code
+
+This mod is originally licensed under WTFPL (see below). It is now relicensed under [CC0 1.0](http://creativecommons.org/publicdomain/zero/1.0).
+
+### Original License
+
+```text
             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                     Version 2, December 2004
 
@@ -11,4 +21,8 @@
    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
   0. You just DO WHAT THE FUCK YOU WANT TO.
+```
 
+## License of Media
+
+The media are licensed under [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/).

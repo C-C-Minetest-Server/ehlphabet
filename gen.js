@@ -1,3 +1,11 @@
+// ehlphabet/gen.js
+// Generate block textures
+/*
+    This mod is originally licensed under WTFPL (see below).
+    It is now relicensed with CC0 1.0.
+    To view a copy of this license,
+    visit http://creativecommons.org/publicdomain/zero/1.0
+*/
 var page = require('webpage').create();
 var w = 64;  // 16,32,64
 var h = 64;

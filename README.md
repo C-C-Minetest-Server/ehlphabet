@@ -1,4 +1,6 @@
 # ehlphabet
+
+Fork of [LinuxForks's ehlphabet mod](https://git.bananach.space/ehlphabet.git).
 Fork of the original [abjphabet mod](https://forum.minetest.net/viewtopic.php?f=11&t=11744) by ABJ
 
 ![screenshot](screenshot.png)
@@ -23,16 +25,15 @@ Textures were generated using [**phantomjs**](http://phantomjs.org/download.html
 
 To (re)generate textures run:
 
-    $ phantomjs gen.js
+```bash
+$ phantomjs gen.js
+```
 
 To customize the look and size of letters, you need to know basic HTML and CSS and change it inside "gen.js".
 
-## License
-
-Textures are licensed under CC-BY-SA 3.0
-See LICENSE file
-
 ## Changelist
+
+2024-03-05 modified by 1F616EMO (tidy up)
 
 2018-01-24 patched by Och_Noe to use it as replacement for abjphabet (create aliases)
 

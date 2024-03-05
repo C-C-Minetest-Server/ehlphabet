@@ -1,0 +1,11 @@
+# textdomain: ehlphabet
+
+##[ init.lua ]##
+Ehlphabet Block '@1'=Блок эльфавита '@1'
+@1 Sticker=
+Blank Sticker=
+Letter Machine=Станок букв
+You cannot dig the @1 with blocks inside=Ты не можеш убрать @1 пока он наполнен блоками
+Letter=Буква
+Blank -> Letter=Бланк -> Буква
+Ehlphabet Block (blank)=Блок эльфавита (бланк)

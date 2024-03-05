@@ -1,0 +1,11 @@
+# textdomain: ehlphabet
+
+##[ init.lua ]##
+Ehlphabet Block '@1'=字母方塊「@1」
+@1 Sticker=@1貼紙
+Blank Sticker=空白貼紙
+Letter Machine=字母方塊機
+You cannot dig the @1 with blocks inside=您無法挖掘含有方塊的@1
+Letter=字母
+Blank -> Letter=空白 -> 字母
+Ehlphabet Block (blank)=字母方塊（空白）
