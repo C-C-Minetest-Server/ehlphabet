@@ -114,11 +114,11 @@ for _, name in ipairs(characters) do
             "ehlphabet_" .. file .. ".png^[transformR180" },
         inventory_image = "ehlphabet_" .. file .. ".png",
         paramtype = "light",
-        paramtype2 = "wallmounted",     -- "colorwallmounted",
+        paramtype2 = "wallmounted", -- "colorwallmounted",
         on_rotate = screwdriver.rotate_simple,
         drawtype = "nodebox",
         is_ground_content = false,
-        drop = "",     -- new
+        drop = "", -- new
         node_box = {
             type = "wallmounted",
             wall_bottom = { -0.5, -0.5, -0.5, 0.5, -0.49, 0.5 },
@@ -148,11 +148,11 @@ minetest.register_node(key .. "_sticker", {
     description = S("Blank Sticker"),
     tiles = { "ehlphabet_000.png" },
     paramtype = "light",
-    paramtype2 = "wallmounted",     -- "colorwallmounted",
+    paramtype2 = "wallmounted", -- "colorwallmounted",
     on_rotate = screwdriver.rotate_simple,
     drawtype = "nodebox",
     is_ground_content = false,
-    drop = "",     -- new
+    drop = "", -- new
     node_box = {
         type = "wallmounted",
         wall_bottom = { -0.5, -0.5, -0.5, 0.5, -0.49, 0.5 },
@@ -194,11 +194,11 @@ minetest.register_node("ehlphabet:machine", {
                     player:get_player_name(),
                     S("You cannot dig the @1 with blocks inside", S("Letter Machine"))
                 )
-            end     -- end if player
+            end -- end if player
             return false
-        end         -- end if not empty
+        end     -- end if not empty
         return true
-    end,            -- end can_dig function
+    end,        -- end can_dig function
 
     after_place_node = function(pos, placer)
         local meta = minetest.env:get_meta(pos)
@@ -262,13 +262,11 @@ minetest.register_node("ehlphabet:machine", {
 minetest.register_alias("abjphabet:machine", "ehlphabet:machine")
 --
 
-minetest.register_node(
-    "ehlphabet:block",
-    {
-        description = S("Ehlphabet Block (blank)"),
-        tiles = { "ehlphabet_000.png" },
-        groups = { cracky = 3 }
-    }
+minetest.register_node("ehlphabet:block", {
+    description = S("Ehlphabet Block (blank)"),
+    tiles = { "ehlphabet_000.png" },
+    groups = { cracky = 3 }
+}
 )
 
 --RECIPE: blank blocks
