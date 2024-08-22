@@ -9,29 +9,6 @@
 
 local minetest = minetest
 
-local digits = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" }
-local base_chars = {
-    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-    "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-}
-local special_chars = {
-    "!", "#", "$", "%", "&", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";",
-    "<", "=", ">", "?", "@", "'", '"'
-}
-local german_chars = { "Ä", "Ö", "Ü", "ß" }
-local cyrillic_chars = {
-    "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н",
-    "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь",
-    "Э", "Ю", "Я"
-}
-local greek_chars = {
-    "Α", "Β", "Γ", "Δ", "Ε", "Ζ", "Η", "Θ", "Ι", "Κ", "Λ", "Μ", "Ν", "Ξ", "Ο",
-    "Π", "Ρ", "Σ", "Τ", "Υ", "Φ", "Χ", "Ψ", "Ω"
-}
-local additional_chars = {
-    "猫", "北", "东", "東", "南", "西", "站",
-}
-
 local characters = {}
 local characters_sticker = {}
 
@@ -51,65 +28,65 @@ local function is_multibyte(ch)
     end
 end
 
-table.insert_all(characters, base_chars)
-table.insert_all(characters, digits)
-table.insert_all(characters, special_chars)
-table.insert_all(characters, german_chars)
-table.insert_all(characters, cyrillic_chars)
-table.insert_all(characters, greek_chars)
-table.insert_all(characters, additional_chars)
-
-table.insert_all(characters_sticker, characters)
-table.insert(characters_sticker, " ")
-
-local create_alias = true
-
 local rotate_simple = minetest.global_exists("screwdriver") and screwdriver.rotate_simple or nil
 
--- generate all available blocks
-for _, name in ipairs(characters) do
-    local desc = S("Ehlphabet Block '@1'", name)
-    local byte = name:byte()
-    local mb = is_multibyte(name)
-    local file, key
+local create_alias = true
+for _, char in ipairs({
+    -- digits
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
 
-    if mb then
-        mb = byte
-        byte = name:byte(2)
-        key = "ehlphabet:" .. mb .. byte
-        file = ("%03d_%03d"):format(mb, byte)
-    else
-        key = "ehlphabet:" .. byte
-        file = ("%03d"):format(byte)
+    -- base characters
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
+    "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+
+    -- special characters
+    "!", "#", "$", "%", "&", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";",
+    "<", "=", ">", "?", "@", "'", '"',
+
+    -- german characters
+    "Ä", "Ö", "Ü", "ß",
+
+    -- cryillic characters
+    "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н",
+    "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь",
+    "Э", "Ю", "Я",
+
+    -- greek characters
+    "Α", "Β", "Γ", "Δ", "Ε", "Ζ", "Η", "Θ", "Ι", "Κ", "Λ", "Μ", "Ν", "Ξ", "Ο",
+    "Π", "Ρ", "Σ", "Τ", "Υ", "Φ", "Χ", "Ψ", "Ω",
+
+    -- additional characters
+    "猫", "北", "东", "東", "南", "西", "站",
+}) do
+    local name = "ehlphabet:" .. char:byte(1)
+    local filekey = ("%03d"):format(char:byte(1))
+    if is_multibyte(char) then
+        name = name .. char:byte(2)
+        filekey = filekey .. ("_%03d"):format(char:byte(2))
     end
 
-    minetest.register_node(
-        key,
-        {
-            description = desc,
-            tiles = { "ehlphabet_" .. file .. ".png" },
-            paramtype2 = "facedir",    -- neu
-            on_rotate = rotate_simple, -- neu
-            is_ground_content = false, --neu
-            groups = { cracky = 3, not_in_creative_inventory = 1, not_in_crafting_guide = 1, ehlphabet_block = 1 }
-        }
-    )
-    --    minetest.register_craft({type = "shapeless", output = "ehlphabet:block", recipe = {key}})
+    minetest.register_node(name, {
+        description = S("Ehlphabet Block '@1'", char),
+        tiles = { "ehlphabet_" .. filekey .. ".png" },
+        paramtype2 = "facedir",    -- neu
+        on_rotate = rotate_simple, -- neu
+        is_ground_content = false, --neu
+        groups = {
+            cracky = 3,
+            --not_in_creative_inventory = 1,
+            --not_in_crafting_guide = 1,
+            ehlphabet_block = 1
+        },
+        sounds = xcompat.sounds.node_sound_stone_defaults(),
+    })
 
-    if create_alias then
-        minetest.register_alias("abjphabet:" .. name, key)
-    end
-
-    -- deactivate alias creation on last latin character
-    if name == "Z" then
-        create_alias = false
-    end
-
-    minetest.register_node(key .. "_sticker", {
-        description = S("@1 Sticker", desc),
-        tiles = { "ehlphabet_" .. file .. ".png",
-            "ehlphabet_" .. file .. ".png^[transformR180" },
-        inventory_image = "ehlphabet_" .. file .. ".png",
+    minetest.register_node(name .. "_sticker", {
+        description = S("Ehlphabet Sticker '@1'", char),
+        tiles = {
+            "ehlphabet_" .. filekey .. ".png",
+            "ehlphabet_" .. filekey .. ".png^[transformR180"
+        },
+        inventory_image = "ehlphabet_" .. filekey .. ".png",
         paramtype = "light",
         paramtype2 = "wallmounted", -- "colorwallmounted",
         on_rotate = rotate_simple,
@@ -125,16 +102,132 @@ for _, name in ipairs(characters) do
         groups = {
             attached_node = 1,
             dig_immediate = 2,
-            not_in_creative_inventory = 1,
+            --not_in_creative_inventory = 1,
+            --not_in_crafting_guide = 1,
             not_blocking_trains = 1
         },
-    }
-    )
+        sounds = xcompat.sounds.node_sound_leaves_defaults(),
+    })
+
+    if create_alias then
+        minetest.register_alias("abjphabet:" .. char, name)
+    end
+    -- deactivate alias creation on last latin character
+    if name == "Z" then
+        create_alias = false
+    end
+
+    characters[char] = name
+    characters_sticker[char] = name .. "_sticker"
+end
+
+-- Alias (can't generate dynamically for non-ascii)
+for src, dst in pairs({
+    -- English Alphabet
+    ["a"] = "A",
+    ["b"] = "B",
+    ["c"] = "C",
+    ["d"] = "D",
+    ["e"] = "E",
+    ["f"] = "F",
+    ["g"] = "G",
+    ["h"] = "H",
+    ["i"] = "I",
+    ["j"] = "J",
+    ["k"] = "K",
+    ["l"] = "L",
+    ["m"] = "M",
+    ["n"] = "N",
+    ["o"] = "O",
+    ["p"] = "P",
+    ["q"] = "Q",
+    ["r"] = "R",
+    ["s"] = "S",
+    ["t"] = "T",
+    ["u"] = "U",
+    ["v"] = "V",
+    ["w"] = "W",
+    ["x"] = "X",
+    ["y"] = "Y",
+    ["z"] = "Z",
+
+    -- German Alphabet
+    ["ä"] = "Ä",
+    ["ö"] = "Ö",
+    ["ü"] = "Ü",
+    ["ß"] = "ß",
+
+    -- cryillic characters
+    ["а"] = "А",
+    ["б"] = "Б",
+    ["в"] = "В",
+    ["г"] = "Г",
+    ["д"] = "Д",
+    ["е"] = "Е",
+    ["ë"] = "Ё",
+    ["ж"] = "Ж",
+    ["з"] = "З",
+    ["и"] = "И",
+    ["й"] = "Й",
+    ["к"] = "К",
+    ["л"] = "Л",
+    ["м"] = "М",
+    ["н"] = "Н",
+    ["о"] = "О",
+    ["п"] = "П",
+    ["р"] = "Р",
+    ["с"] = "С",
+    ["т"] = "Т",
+    ["у"] = "У",
+    ["ф"] = "Ф",
+    ["х"] = "Х",
+    ["ц"] = "Ц",
+    ["ч"] = "Ч",
+    ["ш"] = "Ш",
+    ["щ"] = "Щ",
+    ["ъ"] = "Ъ",
+    ["ы"] = "Ы",
+    ["ь"] = "Ь",
+    ["э"] = "Э",
+    ["ю"] = "Ю",
+    ["я"] = "Я",
+
+    -- greek characters
+    ["α"] = "Α",
+    ["β"] = "Β",
+    ["γ"] = "Γ",
+    ["δ"] = "Δ",
+    ["ε"] = "Ε",
+    ["ζ"] = "Ζ",
+    ["η"] = "Η",
+    ["θ"] = "Θ",
+    ["ι"] = "Ι",
+    ["κ"] = "Κ",
+    ["λ"] = "Λ",
+    ["μ"] = "Μ",
+    ["ν"] = "Ν",
+    ["ξ"] = "Ξ",
+    ["ο"] = "Ο",
+    ["π"] = "Π",
+    ["ρ"] = "Ρ",
+    ["σ"] = "Σ",
+    ["ς"] = "Σ",
+    ["τ"] = "Τ",
+    ["υ"] = "Υ",
+    ["φ"] = "Φ",
+    ["χ"] = "Χ",
+    ["ψ"] = "Ψ",
+    ["ω"] = "Ω",
+}) do
+    characters[src] = characters[dst]
+    characters_sticker[src] = characters_sticker[dst]
 end
 
 minetest.register_craft({ type = "shapeless", output = "ehlphabet:block", recipe = { "group:ehlphabet_block" } })
 
 -- empty sticker
+characters_sticker[" "] = "ehlphabet:32_sticker"
+characters_sticker[""] = "ehlphabet:32_sticker"
 minetest.register_node("ehlphabet:32_sticker", {
     description = S("Blank Sticker"),
     tiles = { "ehlphabet_000.png" },
@@ -156,6 +249,7 @@ minetest.register_node("ehlphabet:32_sticker", {
         not_in_creative_inventory = 1,
         not_blocking_trains = 1
     },
+    sounds = xcompat.sounds.node_sound_leaves_defaults(),
 })
 
 -- Materieals
@@ -181,7 +275,7 @@ minetest.register_node("ehlphabet:machine", {
     can_dig = function(pos, player)
         local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
-        if not inv:is_empty("input") or not inv:is_empty("output") then
+        if not (inv:is_empty("input") and inv:is_empty("output")) then
             if player then
                 minetest.chat_send_player(
                     player:get_player_name(),
@@ -195,56 +289,52 @@ minetest.register_node("ehlphabet:machine", {
 
     on_construct = function(pos)
         local meta = minetest.get_meta(pos)
-        meta:set_string(
-            "formspec",
+        meta:set_string("formspec",
             "size[8,6]" ..
             "field[3.8,.5;1,1;lettername;" .. S("Letter") .. ";]" ..
             "list[current_name;input;2.5,0.2;1,1;]" ..
             "list[current_name;output;4.5,0.2;1,1;]" ..
             "list[current_player;main;0,2;8,4;]" ..
-            "button[2.54,-0.25;3,4;name;" .. S("Blank -> Letter") .. "]"
-        )
+            "button[2.54,-0.25;3,4;name;" .. S("Blank -> Letter") .. "]" ..
+            "listring[current_player;main]" ..
+            "listring[current_name;input]" ..
+            "listring[current_player;main]" ..
+            "listring[current_name;output]")
         local inv = meta:get_inventory()
         inv:set_size("input", 1)
         inv:set_size("output", 1)
     end,
 
-    on_receive_fields = function(pos, _, fields, _)
+    on_receive_fields = function(pos, _, fields)
         local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         local inputstack = inv:get_stack("input", 1)
-        local outputstack = inv:get_stack("output", 1)
-        local ch = fields.lettername
+        local letter = fields.lettername
 
-        if ch ~= nil and ch ~= "" then
-            if inputstack:get_name() == "ehlphabet:block"
-                or inputstack:get_name() == materieal_paper then
-                local ost = outputstack:get_name()
-                local mb = is_multibyte(ch)
-                local key = mb and (ch:byte(1) .. ch:byte(2)) or ch:byte()
-                key = key .. (inputstack:get_name() == materieal_paper and "_sticker" or "")
-                if ost ~= "" and
-                    ost ~= "ehlphabet:" .. key then
-                    --  other type in output slot -> abort
-                    return
-                end
-                local clist = characters
-                if inputstack:get_name() == materieal_paper then
-                    clist = characters_sticker
-                end
-                for _, v in pairs(clist) do
-                    if v == ch then
-                        inv:add_item("output", "ehlphabet:" .. key)
-                        inputstack:take_item()
-                        inv:set_stack("input", 1, inputstack)
-                        break
-                    end
-                end
+        if inputstack:get_name() == "ehlphabet:block"
+            or inputstack:get_name() == materieal_paper then
+            local clist = inputstack:get_name() == materieal_paper and characters_sticker or characters
+            local output_name = clist[letter]
+            if output_name and inv:room_for_item("output", output_name) then
+                inv:add_item("output", output_name)
+                inputstack:take_item()
+                inv:set_stack("input", 1, inputstack)
             end
         end
-    end
-}
-)
+    end,
+
+    allow_metadata_inventory_put = function(_, listname, _, stack)
+        if listname == "input" then
+            local stack_name = stack:get_name()
+            if stack_name == "ehlphabet:block" or stack_name == materieal_paper then
+                return stack:get_count()
+            end
+        end
+        return 0
+    end,
+
+    allow_metadata_inventory_move = function() return 0 end,
+})
 
 --  Alias  (Och_Noe 20180124)
 minetest.register_alias("abjphabet:machine", "ehlphabet:machine")
@@ -254,8 +344,7 @@ minetest.register_node("ehlphabet:block", {
     description = S("Ehlphabet Block (blank)"),
     tiles = { "ehlphabet_000.png" },
     groups = { cracky = 3 }
-}
-)
+})
 
 --RECIPE: blank blocks
 minetest.register_craft({
@@ -285,67 +374,62 @@ minetest.register_craft({
 })
 
 -- Chinese Characters - craft from latin characters
-minetest.register_craft({
-    output = "ehlphabet:231140 4",
-    recipe = {
-        { "",             "",             "" },
-        { "ehlphabet:78", "",             "" },
-        { "ehlphabet:69", "ehlphabet:75", "ehlphabet:79" }
-    }
-})
+for dst, recipe in pairs({
+    ["猫"] = {
+        { "N", "",  "" },
+        { "E", "K", "O" },
+    },
+    ["北"] = {
+        { "N", "O", "R" },
+        { "T", "H", "" },
+    },
+    ["东"] = {
+        { "E", "A", "S" },
+        { "T", "",  "S" },
+    },
+    ["東"] = {
+        { "E", "A", "S" },
+        { "T", "",  "T" },
+    },
+    ["南"] = {
+        { "S", "O", "U" },
+        { "T", "H", "" },
+    },
+    ["西"] = {
+        { "W", "E", "S" },
+        { "T", "",  "" },
+    },
+    ["站"] = {
+        { "S", "T", "A" },
+        { "T", "I", "O" },
+        { "N", "",  "" },
+    },
+}) do
+    local recipe_block, recipe_sticker = table.copy(recipe), table.copy(recipe)
+    local output = 0
+    for _, row in ipairs(recipe_block) do
+        for i, char in ipairs(row) do
+            if char ~= "" then
+                row[i] = characters[char]
+                output = output + 1
+            end
+        end
+    end
+    for _, row in ipairs(recipe_sticker) do
+        for i, char in ipairs(row) do
+            if char ~= "" then
+                row[i] = characters_sticker[char]
+            end
+        end
+    end
 
-minetest.register_craft({
-    output = "ehlphabet:229140 5",
-    recipe = {
-        { "ehlphabet:78", "ehlphabet:79", "ehlphabet:82" },
-        { "ehlphabet:84", "ehlphabet:72", "" },
-        { "",             "",             "" },
-    }
-})
+    minetest.register_craft({
+        output = characters[dst] .. " " .. output,
+        recipe = recipe_block
+    })
 
-minetest.register_craft({
-    output = "ehlphabet:228184 5",
-    recipe = {
-        { "ehlphabet:69", "ehlphabet:65", "ehlphabet:83" },
-        { "ehlphabet:84", "",             "ehlphabet:83" },
-        { "",             "",             "" },
-    }
-})
-
-minetest.register_craft({
-    output = "ehlphabet:230157 5",
-    recipe = {
-        { "ehlphabet:69", "ehlphabet:65", "ehlphabet:83" },
-        { "ehlphabet:84", "",             "ehlphabet:84" },
-        { "",             "",             "" },
-    }
-})
-
-minetest.register_craft({
-    output = "ehlphabet:229141 5",
-    recipe = {
-        { "ehlphabet:83", "ehlphabet:79", "ehlphabet:85" },
-        { "ehlphabet:84", "ehlphabet:72", "" },
-        { "",             "",             "" },
-    }
-})
-
-minetest.register_craft({
-    output = "ehlphabet:232165 4",
-    recipe = {
-        { "ehlphabet:87", "ehlphabet:69", "ehlphabet:83" },
-        { "ehlphabet:84", "",             "" },
-        { "",             "",             "" },
-    }
-})
-
-minetest.register_craft({
-    output = "ehlphabet:231171 7",
-    recipe = {
-        { "ehlphabet:83", "ehlphabet:84", "ehlphabet:65" },
-        { "ehlphabet:84", "ehlphabet:73", "ehlphabet:79" },
-        { "ehlphabet:78", "",             "" },
-    }
-})
-
--- print("[MOD] Elphabet is loaded")
+    minetest.register_craft({
+        output = characters_sticker[dst] .. " " .. output,
+        recipe = recipe_sticker
+    })
+end
