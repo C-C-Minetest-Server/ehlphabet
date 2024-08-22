@@ -23,6 +23,7 @@ read_globals = {
     "vector",
 
     "minetest",
+    "xcompat",
     "screwdriver",
 
     table = {
