@@ -73,8 +73,8 @@ for _, char in ipairs({
         is_ground_content = false, --neu
         groups = {
             cracky = 3,
-            --not_in_creative_inventory = 1,
-            --not_in_crafting_guide = 1,
+            not_in_creative_inventory = 1,
+            not_in_crafting_guide = 1,
             ehlphabet_block = 1
         },
         sounds = xcompat.sounds.node_sound_stone_defaults(),
@@ -102,8 +102,8 @@ for _, char in ipairs({
         groups = {
             attached_node = 1,
             dig_immediate = 2,
-            --not_in_creative_inventory = 1,
-            --not_in_crafting_guide = 1,
+            not_in_creative_inventory = 1,
+            not_in_crafting_guide = 1,
             not_blocking_trains = 1
         },
         sounds = xcompat.sounds.node_sound_leaves_defaults(),
