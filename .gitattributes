@@ -1,6 +1,5 @@
-textures_*/ export-ignore
 .luacheckrc export-ignore
-gen.js export-ignore
+tools/ export-ignore
 lmui.png export-ignore
 recipe.png export-ignore
 screenshot_old.png export-ignore
