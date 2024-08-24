@@ -382,25 +382,25 @@ minetest.register_craft({
 -- Chinese Characters - craft from latin characters
 for dst, recipe in pairs({
     ["非"] = {
-        {"N", "O", "T"},
+        { "N", "O", "T" },
     },
     ["常"] = {
-        {"N", "O", "R"},
-        {"M", "A", "L"},
+        { "N", "O", "R" },
+        { "M", "A", "L" },
     },
     ["可"] = {
-        {"C", "A", "N"}
+        { "C", "A", "N" }
     },
     ["爱"] = {
-        {"L", "O" "V"},
-        {"E", "", "S"},
+        { "L", "O", "V" },
+        { "E", "",  "S" },
     },
     ["愛"] = {
-        {"L", "O", "V"},
-        {"E", "",  "T"},
+        { "L", "O", "V" },
+        { "E", "",  "T" },
     },
     ["的"] = {
-        {"D", "E"}, -- Can't find any better...
+        { "D", "E" }, -- Can't find any better...
     },
     ["猫"] = {
         { "N", "",  "" },
