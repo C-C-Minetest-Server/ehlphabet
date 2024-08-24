@@ -56,7 +56,8 @@ for _, char in ipairs({
     "Π", "Ρ", "Σ", "Τ", "Υ", "Φ", "Χ", "Ψ", "Ω",
 
     -- additional characters
-    "猫", "北", "东", "東", "南", "西", "站",
+    "非", "常", "可", "愛", "爱", "的", "猫",
+    "北", "东", "東", "南", "西", "站",
 }) do
     local name = "ehlphabet:" .. char:byte(1)
     local filekey = ("%03d"):format(char:byte(1))

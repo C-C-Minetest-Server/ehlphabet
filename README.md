@@ -3,11 +3,11 @@
 Fork of [LinuxForks's ehlphabet mod](https://git.bananach.space/ehlphabet.git).
 Fork of the original [abjphabet mod](https://forum.minetest.net/viewtopic.php?f=11&t=11744) by ABJ
 
-![screenshot](screenshot.png)
+![screenshot](doc_images/screenshot.png)
 
 **Letter Machine Reciepe**|**Letter Machine UI**
 ----|----
-![Letter Machine Reciepe](reciepe.png)|![Letter Machine UI](lmui.png)
+![Letter Machine Reciepe](doc_images/reciepe.png)|![Letter Machine UI](doc_images/lmui.png)
 
 Letter blocks can be created with the Letter Machine or given with /giveme ehlphabet:(ascii decimal)
 
