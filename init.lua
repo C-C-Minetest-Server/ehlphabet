@@ -297,6 +297,7 @@ minetest.register_node("ehlphabet:machine", {
             "list[current_name;output;4.5,0.2;1,1;]" ..
             "list[current_player;main;0,2;8,4;]" ..
             "button[2.54,-0.25;3,4;name;" .. S("Blank -> Letter") .. "]" ..
+            "field_close_on_enter[lettername;false]" ..
             "listring[current_player;main]" ..
             "listring[current_name;input]" ..
             "listring[current_player;main]" ..
@@ -307,6 +308,10 @@ minetest.register_node("ehlphabet:machine", {
     end,
 
     on_receive_fields = function(pos, _, fields)
+        if not (fields.name or (fields.key_enter and fields.key_enter_field == "lettername")) then
+            return
+        end
+
         local meta = minetest.get_meta(pos)
         local inv = meta:get_inventory()
         local inputstack = inv:get_stack("input", 1)
