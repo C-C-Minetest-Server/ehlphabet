@@ -480,7 +480,7 @@ for dst, recipe in pairs({
         { "N", "",  "" },
     },
 }) do
-    local recipe_block, recipe_sticker = table.copy(recipe), table.copy(recipe)
+    local recipe_block, recipe_sticker, recipe_glass = table.copy(recipe), table.copy(recipe), table.copy(recipe)
     local output = 0
     for _, row in ipairs(recipe_block) do
         for i, char in ipairs(row) do
@@ -497,6 +497,13 @@ for dst, recipe in pairs({
             end
         end
     end
+    for _, row in ipairs(recipe_glass) do
+        for i, char in ipairs(row) do
+            if char ~= "" then
+                row[i] = characters_glass[char]
+            end
+        end
+    end
 
     minetest.register_craft({
         output = characters[dst] .. " " .. output,
@@ -506,5 +513,10 @@ for dst, recipe in pairs({
     minetest.register_craft({
         output = characters_sticker[dst] .. " " .. output,
         recipe = recipe_sticker
+    })
+
+    minetest.register_craft({
+        output = characters_glass[dst] .. " " .. output,
+        recipe = recipe_glass
     })
 end
