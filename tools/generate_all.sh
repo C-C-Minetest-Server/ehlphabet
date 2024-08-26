@@ -9,7 +9,7 @@ chars=(
     "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z"
 
     # special characters except whitespace
-    "!" "#" "$" "%" "&" "(" ")" "*" "+" "-" "." "/" ":" ";"
+    "!" "#" "$" "%" "&" "(" ")" "*" "+" "," "-" "." "/" ":" ";"
     "<" "=" ">" "?" "@" "'" '"'
 
     # german characters
@@ -29,11 +29,11 @@ chars=(
     "北" "东" "東" "南" "西" "站"
 )
 
-chars=("非" "常" "可" "愛" "爱" "的")
-
 for char in "${chars[@]}"; do
     filename=$(printf "%s" "$char" | od -N 1 -An -tu1 | tr -d ' \n' | xargs -0 printf "%03d")
     second_byte=$(printf "%s" "$char" | od -j 1 -N 1 -An -tu1 | tr -d ' \n' | xargs -0 printf "%03d")
     [ "$second_byte" == "000" ] || filename="$filename"_"$second_byte"
-    ./generate_single.sh "$char" "../textures/ehlphabet_$filename.png"
+    ./generate_single.sh "$char" "../textures/ehlphabet_char_$filename.png"
 done
+
+magick -size 64x64 xc:white "../textures/ehlphabet_char_base.png"

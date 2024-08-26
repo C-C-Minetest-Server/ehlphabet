@@ -11,6 +11,7 @@ local minetest = minetest
 
 local characters = {}
 local characters_sticker = {}
+local characters_glass = {}
 
 ehlphabet = {}
 ehlphabet.path = minetest.get_modpath(minetest.get_current_modname())
@@ -68,7 +69,7 @@ for _, char in ipairs({
 
     minetest.register_node(name, {
         description = S("Ehlphabet Block '@1'", char),
-        tiles = { "ehlphabet_" .. filekey .. ".png" },
+        tiles = { "ehlphabet_char_base.png^ehlphabet_char_" .. filekey .. ".png" },
         paramtype2 = "facedir",    -- neu
         on_rotate = rotate_simple, -- neu
         is_ground_content = false, --neu
@@ -84,10 +85,10 @@ for _, char in ipairs({
     minetest.register_node(name .. "_sticker", {
         description = S("Ehlphabet Sticker '@1'", char),
         tiles = {
-            "ehlphabet_" .. filekey .. ".png",
-            "ehlphabet_" .. filekey .. ".png^[transformR180"
+            "ehlphabet_char_base.png^ehlphabet_char_" .. filekey .. ".png",
+            "ehlphabet_char_base.png^ehlphabet_char_" .. filekey .. ".png^[transformR180"
         },
-        inventory_image = "ehlphabet_" .. filekey .. ".png",
+        inventory_image = "ehlphabet_char_base.png^ehlphabet_char_" .. filekey .. ".png",
         paramtype = "light",
         paramtype2 = "wallmounted", -- "colorwallmounted",
         on_rotate = rotate_simple,
@@ -110,6 +111,36 @@ for _, char in ipairs({
         sounds = xcompat.sounds.node_sound_leaves_defaults(),
     })
 
+    minetest.register_node(name .. "_glass", {
+        description = S("Ehlphabet Glass '@1'", char),
+        tiles = {
+            "ehlphabet_char_" .. filekey .. ".png^[invert:rgb",
+            "ehlphabet_char_" .. filekey .. ".png^[invert:rgb^[transformR180"
+        },
+        inventory_image = "ehlphabet_char_" .. filekey .. ".png^[invert:rgb",
+        paramtype = "light",
+        paramtype2 = "wallmounted", -- "colorwallmounted",
+        on_rotate = rotate_simple,
+        drawtype = "nodebox",
+        is_ground_content = false,
+        drop = "", -- new
+        node_box = {
+            type = "wallmounted",
+            wall_bottom = { -0.5, -0.5, -0.5, 0.5, -0.49, 0.5 },
+            wall_top = { -0.5, 0.49, -0.5, 0.5, 0.5, 0.5 },
+            wall_side = { -0.5, -0.5, -0.5, -0.49, 0.5, 0.5 },
+        },
+        groups = {
+            attached_node = 1,
+            dig_immediate = 2,
+            not_in_creative_inventory = 1,
+            not_in_crafting_guide = 1,
+            not_blocking_trains = 1
+        },
+        sounds = xcompat.sounds.node_sound_glass_defaults(),
+        use_texture_alpha = "blend",
+    })
+
     if create_alias then
         minetest.register_alias("abjphabet:" .. char, name)
     end
@@ -120,6 +151,7 @@ for _, char in ipairs({
 
     characters[char] = name
     characters_sticker[char] = name .. "_sticker"
+    characters_glass[char] = name .. "_glass"
 end
 
 -- Alias (can't generate dynamically for non-ascii)
@@ -222,6 +254,7 @@ for src, dst in pairs({
 }) do
     characters[src] = characters[dst]
     characters_sticker[src] = characters_sticker[dst]
+    characters_glass[src] = characters_glass[dst]
 end
 
 minetest.register_craft({ type = "shapeless", output = "ehlphabet:block", recipe = { "group:ehlphabet_block" } })
@@ -231,7 +264,7 @@ characters_sticker[" "] = "ehlphabet:32_sticker"
 characters_sticker[""] = "ehlphabet:32_sticker"
 minetest.register_node("ehlphabet:32_sticker", {
     description = S("Blank Sticker"),
-    tiles = { "ehlphabet_000.png" },
+    tiles = { "ehlphabet_char_base.png" },
     paramtype = "light",
     paramtype2 = "wallmounted", -- "colorwallmounted",
     on_rotate = rotate_simple,
@@ -255,8 +288,17 @@ minetest.register_node("ehlphabet:32_sticker", {
 
 -- Materieals
 local materieal_paper = xcompat.materials.paper
+local materieal_glass = xcompat.materials.glass
 local materieal_coal = xcompat.materials.coal_lump
 local materieal_stick = xcompat.materials.stick
+
+if minetest.registered_items["xpanes:pane_flat"] then
+    -- MTG
+    materieal_glass = "xpanes:pane_flat"
+elseif minetest.registered_items["xpanes:pane_natural_flat"] then
+    -- MCL
+    materieal_glass = "xpanes:pane_natural_flat"
+end
 
 minetest.register_node("ehlphabet:machine", {
     description = S("Letter Machine"),
@@ -317,22 +359,28 @@ minetest.register_node("ehlphabet:machine", {
         local inputstack = inv:get_stack("input", 1)
         local letter = fields.lettername
 
-        if inputstack:get_name() == "ehlphabet:block"
-            or inputstack:get_name() == materieal_paper then
-            local clist = inputstack:get_name() == materieal_paper and characters_sticker or characters
-            local output_name = clist[letter]
-            if output_name and inv:room_for_item("output", output_name) then
-                inv:add_item("output", output_name)
-                inputstack:take_item()
-                inv:set_stack("input", 1, inputstack)
-            end
+        local stackname = inputstack:get_name()
+        local output_name
+        if stackname == "ehlphabet:block" then
+            output_name = characters[letter]
+        elseif stackname == materieal_paper then
+            output_name = characters_sticker[letter]
+        elseif stackname == materieal_glass then
+            output_name = characters_glass[letter]
+        end
+        if output_name and inv:room_for_item("output", output_name) then
+            inv:add_item("output", output_name)
+            inputstack:take_item()
+            inv:set_stack("input", 1, inputstack)
         end
     end,
 
     allow_metadata_inventory_put = function(_, listname, _, stack)
         if listname == "input" then
             local stack_name = stack:get_name()
-            if stack_name == "ehlphabet:block" or stack_name == materieal_paper then
+            if stack_name == "ehlphabet:block"
+                or stack_name == materieal_paper
+                or stack_name == materieal_glass then
                 return stack:get_count()
             end
         end
@@ -348,7 +396,7 @@ minetest.register_alias("abjphabet:machine", "ehlphabet:machine")
 
 minetest.register_node("ehlphabet:block", {
     description = S("Ehlphabet Block (blank)"),
-    tiles = { "ehlphabet_000.png" },
+    tiles = { "ehlphabet_char_base.png" },
     groups = { cracky = 3 }
 })
 
