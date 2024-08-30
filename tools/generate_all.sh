@@ -23,17 +23,29 @@ chars=(
     # greek characters
     "Α" "Β" "Γ" "Δ" "Ε" "Ζ" "Η" "Θ" "Ι" "Κ" "Λ" "Μ" "Ν" "Ξ" "Ο"
     "Π" "Ρ" "Σ" "Τ" "Υ" "Φ" "Χ" "Ψ" "Ω"
+)
 
-    # additional characters
+chars_chinese=(
     "非" "常" "可" "愛" "爱" "的" "猫"
     "北" "东" "東" "南" "西" "站"
 )
 
-for char in "${chars[@]}"; do
+generate_filename() {
+    char="$1"
     filename=$(printf "%s" "$char" | od -N 1 -An -tu1 | tr -d ' \n' | xargs -0 printf "%03d")
     second_byte=$(printf "%s" "$char" | od -j 1 -N 1 -An -tu1 | tr -d ' \n' | xargs -0 printf "%03d")
     [ "$second_byte" == "000" ] || filename="$filename"_"$second_byte"
-    ./generate_single.sh "$char" "../textures/ehlphabet_char_$filename.png"
+    echo "$filename"
+}
+
+for char in "${chars[@]}"; do
+    filename=$(generate_filename "$char")
+    ./generate_single.sh "$char" "../textures/ehlphabet_char_$filename.png" '/usr/share/fonts/noto/NotoSerif-Bold.ttf'
+done
+
+for char in "${chars_chinese[@]}"; do
+    filename=$(generate_filename "$char")
+    ./generate_single.sh "$char" "../textures/ehlphabet_char_$filename.png" '/usr/share/fonts/noto-cjk/NotoSansCJK-Bold.ttc'
 done
 
 magick -size 64x64 xc:white "../textures/ehlphabet_char_base.png"
