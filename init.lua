@@ -420,12 +420,7 @@ core.register_craft({
     }
 })
 
---RECIPE: craft unused blocks back into paper
-core.register_craft({
-    output = materieal_paper,
-    recipe = { "ehlphabet:block" },
-    type = "shapeless"
-})
+-- FIXME: block -> paper become 4 papers
 
 -- Chinese Characters - craft from latin characters
 for dst, recipe in pairs({
