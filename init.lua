@@ -7,16 +7,16 @@
     visit http://creativecommons.org/publicdomain/zero/1.0
 ]]
 
-local minetest = minetest
+local core = minetest
 
 local characters = {}
 local characters_sticker = {}
 local characters_glass = {}
 
 ehlphabet = {}
-ehlphabet.path = minetest.get_modpath(minetest.get_current_modname())
+ehlphabet.path = core.get_modpath(core.get_current_modname())
 
-local S = minetest.get_translator("ehlphabet")
+local S = core.get_translator("ehlphabet")
 ehlphabet.intllib = S
 
 local function is_multibyte(ch)
@@ -29,7 +29,7 @@ local function is_multibyte(ch)
     end
 end
 
-local rotate_simple = minetest.global_exists("screwdriver") and screwdriver.rotate_simple or nil
+local rotate_simple = core.global_exists("screwdriver") and screwdriver.rotate_simple or nil
 
 local create_alias = true
 for _, char in ipairs({
@@ -67,7 +67,7 @@ for _, char in ipairs({
         filekey = filekey .. ("_%03d"):format(char:byte(2))
     end
 
-    minetest.register_node(name, {
+    core.register_node(name, {
         description = S("Ehlphabet Block '@1'", char),
         tiles = { "ehlphabet_char_base.png^ehlphabet_char_" .. filekey .. ".png" },
         paramtype2 = "facedir",    -- neu
@@ -82,7 +82,7 @@ for _, char in ipairs({
         sounds = xcompat.sounds.node_sound_stone_defaults(),
     })
 
-    minetest.register_node(name .. "_sticker", {
+    core.register_node(name .. "_sticker", {
         description = S("Ehlphabet Sticker '@1'", char),
         tiles = {
             "ehlphabet_char_base.png^ehlphabet_char_" .. filekey .. ".png",
@@ -111,7 +111,7 @@ for _, char in ipairs({
         sounds = xcompat.sounds.node_sound_leaves_defaults(),
     })
 
-    minetest.register_node(name .. "_glass", {
+    core.register_node(name .. "_glass", {
         description = S("Ehlphabet Glass '@1'", char),
         tiles = {
             "ehlphabet_char_" .. filekey .. ".png^[invert:rgb",
@@ -142,7 +142,7 @@ for _, char in ipairs({
     })
 
     if create_alias then
-        minetest.register_alias("abjphabet:" .. char, name)
+        core.register_alias("abjphabet:" .. char, name)
     end
     -- deactivate alias creation on last latin character
     if name == "Z" then
@@ -257,12 +257,12 @@ for src, dst in pairs({
     characters_glass[src] = characters_glass[dst]
 end
 
-minetest.register_craft({ type = "shapeless", output = "ehlphabet:block", recipe = { "group:ehlphabet_block" } })
+core.register_craft({ type = "shapeless", output = "ehlphabet:block", recipe = { "group:ehlphabet_block" } })
 
 -- empty sticker
 characters_sticker[" "] = "ehlphabet:32_sticker"
 characters_sticker[""] = "ehlphabet:32_sticker"
-minetest.register_node("ehlphabet:32_sticker", {
+core.register_node("ehlphabet:32_sticker", {
     description = S("Blank Sticker"),
     tiles = { "ehlphabet_char_base.png" },
     paramtype = "light",
@@ -292,15 +292,15 @@ local materieal_glass = xcompat.materials.glass
 local materieal_coal = xcompat.materials.coal_lump
 local materieal_stick = xcompat.materials.stick
 
-if minetest.registered_items["xpanes:pane_flat"] then
+if core.registered_items["xpanes:pane_flat"] then
     -- MTG
     materieal_glass = "xpanes:pane_flat"
-elseif minetest.registered_items["xpanes:pane_natural_flat"] then
+elseif core.registered_items["xpanes:pane_natural_flat"] then
     -- MCL
     materieal_glass = "xpanes:pane_natural_flat"
 end
 
-minetest.register_node("ehlphabet:machine", {
+core.register_node("ehlphabet:machine", {
     description = S("Letter Machine"),
     tiles = {
         "ehlphabet_machine_top.png",
@@ -316,11 +316,11 @@ minetest.register_node("ehlphabet:machine", {
 
     -- "Can you dig it?" -Cyrus
     can_dig = function(pos, player)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local inv = meta:get_inventory()
         if not (inv:is_empty("input") and inv:is_empty("output")) then
             if player then
-                minetest.chat_send_player(
+                core.chat_send_player(
                     player:get_player_name(),
                     S("You cannot dig the @1 with blocks inside", S("Letter Machine"))
                 )
@@ -331,7 +331,7 @@ minetest.register_node("ehlphabet:machine", {
     end,        -- end can_dig function
 
     on_construct = function(pos)
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         meta:set_string("formspec",
             "size[8,6]" ..
             "field[3.8,.5;1,1;lettername;" .. S("Letter") .. ";]" ..
@@ -354,7 +354,7 @@ minetest.register_node("ehlphabet:machine", {
             return
         end
 
-        local meta = minetest.get_meta(pos)
+        local meta = core.get_meta(pos)
         local inv = meta:get_inventory()
         local inputstack = inv:get_stack("input", 1)
         local letter = fields.lettername
@@ -391,17 +391,17 @@ minetest.register_node("ehlphabet:machine", {
 })
 
 --  Alias  (Och_Noe 20180124)
-minetest.register_alias("abjphabet:machine", "ehlphabet:machine")
+core.register_alias("abjphabet:machine", "ehlphabet:machine")
 --
 
-minetest.register_node("ehlphabet:block", {
+core.register_node("ehlphabet:block", {
     description = S("Ehlphabet Block (blank)"),
     tiles = { "ehlphabet_char_base.png" },
     groups = { cracky = 3 }
 })
 
 --RECIPE: blank blocks
-minetest.register_craft({
+core.register_craft({
     output = "ehlphabet:block 8",
     recipe = {
         { materieal_paper, materieal_paper, materieal_paper },
@@ -411,7 +411,7 @@ minetest.register_craft({
 })
 
 --RECIPE: build the machine!
-minetest.register_craft({
+core.register_craft({
     output = "ehlphabet:machine",
     recipe = {
         { materieal_stick, materieal_coal,    materieal_stick },
@@ -421,7 +421,7 @@ minetest.register_craft({
 })
 
 --RECIPE: craft unused blocks back into paper
-minetest.register_craft({
+core.register_craft({
     output = materieal_paper,
     recipe = { "ehlphabet:block" },
     type = "shapeless"
@@ -505,17 +505,17 @@ for dst, recipe in pairs({
         end
     end
 
-    minetest.register_craft({
+    core.register_craft({
         output = characters[dst] .. " " .. output,
         recipe = recipe_block
     })
 
-    minetest.register_craft({
+    core.register_craft({
         output = characters_sticker[dst] .. " " .. output,
         recipe = recipe_sticker
     })
 
-    minetest.register_craft({
+    core.register_craft({
         output = characters_glass[dst] .. " " .. output,
         recipe = recipe_glass
     })
